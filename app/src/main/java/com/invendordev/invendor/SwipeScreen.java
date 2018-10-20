@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,6 +19,9 @@ import android.widget.TextView;
 public class SwipeScreen extends AppCompatActivity{
 
     GestureDetector gestureScanner;
+    private int timesDown = 0;
+    private int timesUp = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +45,23 @@ public class SwipeScreen extends AppCompatActivity{
         final GestureDetector gdt = new GestureDetector(this, new gestureListener());
         final View background  = findViewById(R.id.background);
         background.setOnTouchListener(new View.OnTouchListener() {
-
+            boolean downed = false;
             public boolean onTouch(View view, final MotionEvent event) {
+
                 if(gdt.onTouchEvent(event)){
-                    background.setBackgroundColor(getResources().getColor(R.color.green));
-                    //((TextView) (findViewById(R.id.mainText))).setTextColor(getResources().getColor(R.color.colorPrimary));
-                }else if(!gdt.onTouchEvent(event)){
-                    background.setBackgroundColor(getResources().getColor(R.color.red));
+                    background.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
+                    timesUp++;
+                    Log.i("Samuel", "Swiped up: " + timesUp);
+                }else if(!gdt.onTouchEvent(event) && !downed){
+                    background.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
+                    timesDown++;
+                    Log.i("Samuel", "Swiped down: " + timesDown);
+                    downed = true;
                 }
                 return true;
             }
-        });
 
+        });
     }
 
     @Override
@@ -75,6 +85,7 @@ public class SwipeScreen extends AppCompatActivity{
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
