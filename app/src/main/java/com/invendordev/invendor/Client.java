@@ -17,8 +17,8 @@ public class Client extends Activity {
 
     private Socket socket;
 
-    private static final int SERVERPORT = 5000;
-    private static final String SERVER_IP = "10.0.2.2";
+    private static final int SERVERPORT = 1;
+    private static final String SERVER_IP = "10.34.7.38";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
