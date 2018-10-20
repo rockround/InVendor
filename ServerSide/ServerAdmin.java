@@ -33,7 +33,7 @@ package ServerSide;
 import java.io.*;
 import java.net.*;
 
-public class ServerClient {
+public class ServerAdmin {
 	public static void main(String[] args) throws IOException {
 
 		String hostName;

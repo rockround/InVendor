@@ -1,3 +1,5 @@
+
+package ServerSide;
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
  *
@@ -43,19 +45,12 @@ public class ServerProtocol {
     private int state = WAITING;
     private int currentJoke = 0;
  
-    private String[] clues = { "Turnip", "Little Old Lady", "Atch", "Who", "Who" };
-    private String[] answers = { "Turnip the heat, it's cold in here!",
-                                 "I didn't know you could yodel!",
-                                 "Bless you!",
-                                 "Is there an owl in here?",
-                                 "Is there an echo in here?" };
- 
     public String processInput(String theInput) {
         String theOutput = null;
-        if (state == WAITING) {
-            theOutput = "ServerStart";
+        //if (state == WAITING) {
+        //    theOutput = "ServerStart";
             //state = SENTKNOCKKNOCK;
-        } 
-        return theOutput;
+        //} 
+        return theInput;////Output;
     }
 }
