@@ -42,21 +42,24 @@ public class SwipeScreen extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
-        Resources res = getResources();
-        String text = String.format(res.getString(R.string.frame_name),name);
+
 
         //mail icon button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });**/
+
+        String text = String.format(getResources().getString(R.string.frame_name),name);
+        TextView mainText = findViewById(R.id.mainText);
+        mainText.setText(text);
 
         final gestureListener gl = new gestureListener();
         final GestureDetector gdt = new GestureDetector(this, gl);
@@ -81,6 +84,8 @@ public class SwipeScreen extends AppCompatActivity{
             }
 
         });
+
+
     }
 
     @Override
