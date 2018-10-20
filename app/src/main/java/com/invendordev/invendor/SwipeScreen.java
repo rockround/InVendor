@@ -1,5 +1,6 @@
 package com.invendordev.invendor;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +23,19 @@ public class SwipeScreen extends AppCompatActivity{
     private int timesDown = 0;
     private int timesUp = 0;
 
+    private String name;
+
+    SwipeScreen(){
+        name = "";
+        timesUp = 0;
+        timesDown = 0;
+    }
+
+    SwipeScreen(String frameName){
+        name = frameName;
+        timesUp = 0;
+        timesDown = 0;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +44,9 @@ public class SwipeScreen extends AppCompatActivity{
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Resources res = getResources();
+        String text = String.format(res.getString(R.string.frame_name),name);
 
         //mail icon button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -88,6 +105,19 @@ public class SwipeScreen extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    public String getName() { return name; }
 
+    public int getTimesUp() {
+        return timesUp;
+    }
+    public int getTimesDown(){
+        return timesDown;
+    }
 
+    public void setTimesUp(int i){
+        timesUp = i;
+    }
+    public void setTimesDown(int i){
+        timesDown = i;
+    }
 }

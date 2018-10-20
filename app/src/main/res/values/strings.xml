@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">InVendor</string>
     <string name="action_settings">Settings</string>
+    <string name="frame_name">Name of Frame %1$s </string>
     <color name="green">#00e676</color>
     <color name="red">#ff5252</color>
 </resources>
