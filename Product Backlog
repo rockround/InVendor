@@ -1,0 +1,36 @@
+Goal 0a:
+Make an android app where if you swipe up the screen turns green, swipe down the screen turns red.
+
+Goal 0b:
+Create server-client simple login system with account creation
+
+Goal 1a:
+Track swipes of frame in account
+
+Goal 1b:
+Count total swipes on server, display on site
+
+Goal 2a:
+Have multiple frames in a looping stack
+
+Goal 2b:
+Count Swipes on server per frame
+
+Goal 3a:
+If second down, frame removed from stack locally
+
+Goal 3b:
+Add frame lifetime, after which it dies globally
+
+Goal 4a:
+Make account screen where a limit on up swipes can be set
+
+Goal 4b: 
+Add frame quota, where after enough up swipes it goes into “release” state globally
+
+Goal 5a:
+Add to menu screen tags to get frames of certain tags
+
+Goal 5b:
+Add tags to each frame for sorting
+
