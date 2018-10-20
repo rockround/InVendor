@@ -45,7 +45,7 @@ public class SwipeScreen extends AppCompatActivity{
         final GestureDetector gdt = new GestureDetector(this, gl);
         final View background  = findViewById(R.id.background);
         background.setOnTouchListener(new View.OnTouchListener() {
-            //boolean downed = false;
+
             public boolean onTouch(View view, final MotionEvent event) {
 
                 if(gdt.onTouchEvent(event)){
@@ -59,12 +59,7 @@ public class SwipeScreen extends AppCompatActivity{
                         timesDown++;
                         Log.i("Samuel", "Swiped down: " + timesDown);
                     }
-                }/*else if(!gdt.onTouchEvent(event) && !downed){
-                    background.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
-                    timesDown++;
-                    Log.i("Samuel", "Swiped down: " + timesDown);
-                    downed = true;
-                }*/
+                }
                 return true;
             }
 
