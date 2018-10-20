@@ -5,6 +5,9 @@ import android.view.MotionEvent;
 
 public class gestureListener extends GestureDetector.SimpleOnGestureListener {
 
+    private boolean up = false;
+    private boolean down = false;
+
     @Override
     public boolean onDown(MotionEvent motionEvent) {
         return false;
@@ -39,10 +42,18 @@ public class gestureListener extends GestureDetector.SimpleOnGestureListener {
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
         if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+            up=true;
+            down=false;
             return true; // Bottom to top
         }  else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-            return false; // Top to bottom
+            up=false;
+            down=true;
+            return true; // Top to bottom
         }
         return false;
     }
+
+    public boolean getUp()   { return up; }
+
+    public boolean getDown() { return down; }
 }
