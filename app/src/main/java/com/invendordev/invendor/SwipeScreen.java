@@ -1,23 +1,32 @@
 package com.invendordev.invendor;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-public class SwipeScreen extends AppCompatActivity {
+public class SwipeScreen extends AppCompatActivity{
+
+    GestureDetector gestureScanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //mail icon button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -26,6 +35,23 @@ public class SwipeScreen extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+
+        final GestureDetector gdt = new GestureDetector(this, new gestureListener());
+        final View background  = findViewById(R.id.background);
+        background.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View view, final MotionEvent event) {
+                if(gdt.onTouchEvent(event)){
+                    background.setBackgroundColor(getResources().getColor(R.color.green));
+                    //((TextView) (findViewById(R.id.mainText))).setTextColor(getResources().getColor(R.color.colorPrimary));
+                }else if(!gdt.onTouchEvent(event)){
+                    background.setBackgroundColor(getResources().getColor(R.color.red));
+                }
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -49,4 +75,6 @@ public class SwipeScreen extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
