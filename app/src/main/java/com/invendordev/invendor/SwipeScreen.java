@@ -41,7 +41,7 @@ public class SwipeScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
-        //dummy comment
+
 
         String text = String.format(getResources().getString(R.string.frame_name),name);
         TextView mainText = findViewById(R.id.mainText);
