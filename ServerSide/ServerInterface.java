@@ -108,18 +108,30 @@ public class ServerInterface {
 
 									} else if (data[0].equals("Upvote")) {
 										if (data.length == 3) {
-											upvoteFrame(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+											upvoteFrame(getName(),Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+											//code to register upvote by user = getName();
 										}
 									} else if (data[0].equals("Verify")) {
-										out.println(verify(data[1], data[2]) == 0 ? "Success" : "Failure");
+										if(verify(data[1],data[2])==0) {
+											out.println("Success");
+											setName(data[1]);
+										}else {
+											out.println("Failure");
+										}
+									} else if (data[0].equals("Create")) {
+										if(!create(data[1], data[2], data[3], data[4].equals("0"))) {
+											out.println("Bad Incorrect Attempt. Try again with better shit.");
+										}
+										else {
+											out.println("");
+										}
 									}
-
 									else {
 										System.out.println("NOT RUNNING");
 									}
 								}
 							} catch (Exception e) {
-								System.out.println("Wait");
+								e.printStackTrace();
 							}
 							// outputLine = kkp.processInput(inputLine);
 							// out.println(outputLine); //talk to output
@@ -138,70 +150,6 @@ public class ServerInterface {
 		thread.start();
 	}
 
-	TimerTask checkNewUser = new TimerTask() {
-
-		@Override
-		public void run() {
-
-			Thread thread = new Thread("A") {
-
-				public void run() {
-					try {
-						Socket clientSocket;
-						clientSocket = serverSocket.accept();
-						System.out.println("Connected");
-						setName(clientSocket.getLocalAddress().getHostName());
-						BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-						Timer checker = new Timer();
-						TimerTask checkInput = new TimerTask() {
-
-							@Override
-							public void run() {
-								// System.out.println(getName());
-								// TODO Auto-generated method stub
-								try {
-									adminLine = in.readLine();
-									if (adminLine != null) {
-										if (adminLine.equals("Break"))
-											cancel();
-										else if (adminLine.contains("Add")) {
-											String[] data = adminLine.split(" ");
-											if (data.length == 4)
-												try {
-													addFrame(data[1], Integer.parseInt(data[2]),
-															Integer.parseInt(data[3]));
-													System.out.println("Added");
-												} catch (Exception e) {
-													System.out.println("BAD");
-												}
-
-										} else {
-											System.out.println("NOT RUNNING");
-										}
-									}
-								} catch (Exception e) {
-									System.out.println("Wait");
-								}
-
-								// outputLine = kkp.processInput(inputLine);
-								// out.println(outputLine); //talk to output
-								// if (outputLine.equals("Bye."))
-								// break;
-							}
-						};
-						checker.schedule(checkInput, 0, 10);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				}
-			};
-			thread.start();
-
-		}
-
-	};
 
 	TimerTask checkFrames = new TimerTask() {
 
@@ -211,7 +159,7 @@ public class ServerInterface {
 				FrameObject currentFrame = currentFrames.get(i);
 				if (currentFrame.refresh()) {
 					if (currentFrame.isFunded())
-						System.out.println(currentFrames.remove(i).name + " was successfully funded!");
+						System.out.println(currentFrames.get(i).name + " was successfully funded by: " +currentFrames.remove(i).toString());
 					else
 						System.out.println("Removed " + currentFrames.remove(i).name);
 				}
@@ -225,8 +173,8 @@ public class ServerInterface {
 		currentFrames.add(new FrameObject(name, System.currentTimeMillis(), lifeSpan, targetVibes));
 	}
 
-	public void upvoteFrame(int index, int vibes) {
-		currentFrames.get(index).addVibes(vibes);
+	public void upvoteFrame(String user, int index, int vibes) {
+		currentFrames.get(index).addVibes(user, vibes);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -262,5 +210,27 @@ public class ServerInterface {
 	private static long hashPassword(String password) {
 		// replace with more meaningful shit
 		return (long) (password.hashCode());
+	}
+	
+	private static boolean create(String username, String email, String password, boolean inventor) throws SQLException
+	{
+		Connection con = DriverManager.getConnection("jdbc:mysql://invendor-database.mysql.database.azure.com:3306/data_schema?serverTimezone=UTC", "invendoradmin@invendor-database", "UTDhack2018");
+		Statement stmt = con.createStatement();
+		long hashPassword = hashPassword(password);
+		try {
+			stmt.execute("INSERT INTO user values ('" + username + "', '" + email + "', '" + hashPassword + "')");
+			stmt.execute("INSERT INTO " + (inventor ? "inventor" : "peer") + " values ('" + username + "')");
+			return true;
+		}
+		catch (SQLException e) {
+			return false;
+		}
+		
+	}
+	
+	private String getName()
+	{
+		
+		return "";
 	}
 }
