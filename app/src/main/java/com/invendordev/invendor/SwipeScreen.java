@@ -17,14 +17,22 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class SwipeScreen extends AppCompatActivity{
 
     GestureDetector gestureScanner;
     private int timesDown = 0;
     private int timesUp = 0;
-
+    private Socket socket;
     private String name;
-
+    PrintWriter out;
     SwipeScreen(){
         name = "";
         timesUp = 0;
@@ -41,7 +49,14 @@ public class SwipeScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
-
+        new Thread(new ClientThread()).start();
+        try {
+            out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
@@ -80,6 +95,7 @@ public class SwipeScreen extends AppCompatActivity{
                         Log.i("Samuel", "Swiped down: " + timesDown);
                     }
                 }
+                    out.println("COUNT " + timesUp + " " + timesDown);
                 return true;
             }
 
@@ -124,5 +140,23 @@ public class SwipeScreen extends AppCompatActivity{
     }
     public void setTimesDown(int i){
         timesDown = i;
+    }
+    class ClientThread implements Runnable{
+        private static final int SERVERPORT = 1;
+        private static final String SERVER_IP = "10.34.7.38";
+
+        @Override
+        public void run() {
+            try {
+                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+
+                socket = new Socket(serverAddr, SERVERPORT);
+
+            } catch (UnknownHostException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 }
