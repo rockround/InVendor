@@ -13,6 +13,7 @@ public class Login_or_Register extends AppCompatActivity {
 
     private Button btnNavLogin;
     private Button btnNavRegister;
+    private Button rootButton;
     Context context = this;
 
     @Override
@@ -22,6 +23,7 @@ public class Login_or_Register extends AppCompatActivity {
 
         btnNavLogin = (Button) findViewById(R.id.btnNavLogin);
         btnNavRegister = (Button) findViewById(R.id.btnNavRegister);
+        rootButton = (Button) findViewById(R.id.rootButton);
 
         btnNavRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +39,15 @@ public class Login_or_Register extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(context, "Clicked Login button", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        rootButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, "You've bypassed the login!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, SwipeScreen.class);
                 startActivity(intent);
             }
         });

@@ -1,5 +1,6 @@
 package com.invendordev.invendor;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.io.BufferedWriter;
@@ -38,18 +40,47 @@ public class SwipeScreen extends AppCompatActivity{
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        // Set the content to appear under the system bars so that the
+                        // content doesn't resize when the system bars hide and show.
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
 
 
-        String text = String.format(getResources().getString(R.string.frame_name),name);
-        TextView mainText = findViewById(R.id.mainText);
-        mainText.setText(text);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         final gestureListener gl = new gestureListener();
         final GestureDetector gdt = new GestureDetector(this, gl);
         final View background  = findViewById(R.id.background);
+
         background.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View view, final MotionEvent event) {
@@ -122,8 +153,7 @@ public class SwipeScreen extends AppCompatActivity{
                 //InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 
                 socket = new Socket("10.34.16.154", SERVERPORT);
-                //Log.i("m1404525",(socket==null)+"");
-                //Log.i("m1404525",(socket==null)+" dog");
+
                 Log.i("pswd", "in cllientthread");
                 try {
 
@@ -141,7 +171,6 @@ public class SwipeScreen extends AppCompatActivity{
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            //Log.i("m140","DG");
 
         }
     }
