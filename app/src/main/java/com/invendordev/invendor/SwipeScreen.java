@@ -55,7 +55,7 @@ public class SwipeScreen extends AppCompatActivity{
             public void run() {
                 try  {
                     try {
-                        socket = new Socket("LAPTOP-TGQTES87", 1);
+                        socket = new Socket("localhost", 1);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
