@@ -54,27 +54,7 @@ public class SwipeScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
-<<<<<<< HEAD
-=======
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try  {
-                    try {
-                        socket = new Socket("10.34.16.154", 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
->>>>>>> afefefad107c088d73b51be6888ff85afefc68c1
-
+        //dummy comment
 
         String text = String.format(getResources().getString(R.string.frame_name),name);
         TextView mainText = findViewById(R.id.mainText);
