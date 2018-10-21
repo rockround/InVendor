@@ -46,7 +46,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
 
     /**
@@ -75,12 +75,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.signInUsername);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.registerUsername);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.signInPassword);
+        mPasswordView = (EditText) findViewById(R.id.registerPassword);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -92,7 +92,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.username_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_register_button);
+
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,8 +102,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        mLoginFormView = findViewById(R.id.signin_form);
-        mProgressView = findViewById(R.id.signin_progress);
+        mLoginFormView = findViewById(R.id.register_form);
+        mProgressView = findViewById(R.id.register_progress);
 
     }
 
@@ -231,10 +232,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             Log.i("pswd", input);
                             changeBool((Boolean)(input.equals("Success")));
                             Log.i("pswd", "True or false val: " + trueorfalse);
-                            } catch (IOException e) {
-                                Log.i("pswd", "bad");
-                                e.printStackTrace();
-                            }
+                        } catch (IOException e) {
+                            Log.i("pswd", "bad");
+                            e.printStackTrace();
+                        }
                     }catch(Exception e){
 
                     }
@@ -345,7 +346,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(RegisterActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);

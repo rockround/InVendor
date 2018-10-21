@@ -13,7 +13,7 @@
 
     <!-- Login progress -->
     <ProgressBar
-        android:id="@+id/signin_progress"
+        android:id="@+id/register_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,12 +21,12 @@
         android:visibility="gone" />
 
     <ScrollView
-        android:id="@+id/signin_form"
+        android:id="@+id/register_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/email_signin_form"
+            android:id="@+id/email_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -36,10 +36,10 @@
                 android:layout_height="wrap_content">
 
                 <AutoCompleteTextView
-                    android:id="@+id/signInUsername"
+                    android:id="@+id/registerUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Username"
+                    android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -51,10 +51,10 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/signInPassword"
+                    android:id="@+id/registerPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
+                    android:hint="Password"
                     android:imeActionId="6"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
@@ -65,12 +65,12 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/username_sign_in_button"
+                android:id="@+id/email_register_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Sign In"
+                android:text="Register"
                 android:textStyle="bold" />
 
         </LinearLayout>
