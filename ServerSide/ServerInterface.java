@@ -1,4 +1,3 @@
-package ServerSide;
 
 /*
  * Copyright (c) 1995, 2014, Oracle and/or its affiliates. All rights reserved.
@@ -32,6 +31,11 @@ package ServerSide;
  */
 
 import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,7 +45,6 @@ import java.io.*;
 
 public class ServerInterface {
 	List<FrameObject> currentFrames;
-	// PrintWriter out;
 	Scanner scn;
 	String inputLine, outputLine, adminLine;
 	ServerSocket serverSocket;
@@ -57,10 +60,9 @@ public class ServerInterface {
 		Timer refresh = new Timer();
 		refresh.schedule(checkFrames, 5, 10);
 		// refresh.schedule(checkNewUser, 10, 10);
-		for (int i = 0; i < 5; i++) {					//Creates 5 threads that wait for new server.
+		for (int i = 0; i < 10; i++) { // Creates 5 threads that wait for new server.
 			makeUserThread(i);
 		}
-		// out = new PrintWriter(clientSocket.getOutputStream(), true);
 		// scn = new Scanner(System.in);
 		// Initiate conversation with client
 		// ServerProtocol kkp = new ServerProtocol();
@@ -79,6 +81,8 @@ public class ServerInterface {
 					System.out.println("Connected");
 					setName(clientSocket.getLocalAddress().getHostName());
 					BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
 					Timer checker = new Timer();
 					TimerTask checkInput = new TimerTask() {
 
@@ -89,6 +93,7 @@ public class ServerInterface {
 							try {
 								adminLine = in.readLine();
 								if (adminLine != null) {
+									System.out.println(adminLine);
 									String[] data = adminLine.split(" ");
 									if (adminLine.equals("Break")) {
 										cancel();
@@ -105,7 +110,11 @@ public class ServerInterface {
 										if (data.length == 3) {
 											upvoteFrame(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
 										}
-									} else {
+									} else if (data[0].equals("Verify")) {
+										out.println(verify(data[1], data[2]) == 0 ? "Success" : "Failure");
+									}
+
+									else {
 										System.out.println("NOT RUNNING");
 									}
 								}
@@ -228,5 +237,30 @@ public class ServerInterface {
 		} else
 			portNumber = Integer.parseInt(args[0]);
 		si.startServer(portNumber);
+	}
+
+	private static int verify(String username, String password) throws SQLException {
+		Connection con = DriverManager.getConnection(
+				"jdbc:mysql://invendor-database.mysql.database.azure.com:3306/data_schema?serverTimezone=UTC",
+				"invendoradmin@invendor-database", "UTDhack2018");
+		Statement stmt = con.createStatement();
+
+		ResultSet result = stmt
+				.executeQuery("SELECT password_hash FROM data_schema.user where userName = '" + username + "'");
+		int returnVal = 1;
+		result.next();
+		try {
+			long tempPassword = result.getLong(1);
+			con.close();
+			return (int) (Math.abs(hashPassword(password) - tempPassword));
+		} catch (SQLException e) {
+			con.close();
+			return -1;
+		}
+	}
+
+	private static long hashPassword(String password) {
+		// replace with more meaningful shit
+		return (long) (password.hashCode());
 	}
 }

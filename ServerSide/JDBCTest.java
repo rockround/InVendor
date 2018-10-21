@@ -11,7 +11,7 @@ public class JDBCTest {
             // broken Java implementations
 
             //Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            System.out.println(verify("AkitoIto", "dfg"));
+            System.out.println(verify("AkitoIto", "dog"));
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -37,6 +37,8 @@ public class JDBCTest {
 			return -1;
 		}
 	}
+	
+	private static create 
 	
 	private static long hashPassword(String password)
 	{

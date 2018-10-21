@@ -1,4 +1,4 @@
-package ServerSide;
+
 
 public class FrameObject {
 int lifeTime;
