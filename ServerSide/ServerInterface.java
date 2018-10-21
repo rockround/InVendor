@@ -41,69 +41,93 @@ import java.io.*;
 
 public class ServerInterface {
 	List<FrameObject> currentFrames;
-	PrintWriter out;
-	BufferedReader in;
+	//PrintWriter out;
 	Scanner scn;
 	String inputLine, outputLine, adminLine;
+	ServerSocket serverSocket;
 	public ServerInterface() {
 		currentFrames = new ArrayList<>();
-		Timer refresh = new Timer();
-		Timer clock1 = new Timer();
-		refresh.schedule(checkInput, 0,10);
-		clock1.schedule(checkFrames, 1,10);
 	}
 	public void startServer(int port) throws IOException{
 
-		ServerSocket serverSocket = new ServerSocket(port);
-		Socket clientSocket = serverSocket.accept();
-		out = new PrintWriter(clientSocket.getOutputStream(), true);
-		in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		scn = new Scanner(System.in);
+		serverSocket = new ServerSocket(port);
+		//Socket clientSocket = serverSocket.accept();
+		Timer refresh = new Timer();
+		refresh.schedule(checkFrames, 5, 10);
+		refresh.schedule(checkNewUser, 10, 10);
+		//out = new PrintWriter(clientSocket.getOutputStream(), true);
+		//scn = new Scanner(System.in);
 			// Initiate conversation with client
 			//ServerProtocol kkp = new ServerProtocol();
 			//outputLine = kkp.processInput(null);
 			//out.println(outputLine);
 			
 	}
-	TimerTask checkInput = new TimerTask(){
-		
+	TimerTask checkNewUser = new TimerTask(){
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			try{
-			adminLine = scn.nextLine();
-			if (adminLine != null) {
-				if (adminLine.equals("Break"))
-					cancel();
-				else if (adminLine.contains("Add")) {
-					String[] data = adminLine.split(" ");
-					if (data.length == 4)
+				
+				Thread thread = new Thread("A"){
+					
+					public void run(){
 						try {
-							addFrame(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]));
-							System.out.println("Added");
-						} catch (Exception e) {
-							System.out.println("BAD");
+							Socket clientSocket;
+							clientSocket = serverSocket.accept();
+							setName(clientSocket.getLocalAddress().getHostName());
+							System.out.println("Accepted");
+							BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+							Timer checker = new Timer();
+							TimerTask checkInput = new TimerTask(){
+								
+								@Override
+								public void run() {
+									//System.out.println(getName());
+									// TODO Auto-generated method stub
+									try{
+									adminLine = in.readLine();
+									if (adminLine != null) {
+										if (adminLine.equals("Break"))
+											cancel();
+										else if (adminLine.contains("Add")) {
+											String[] data = adminLine.split(" ");
+											if (data.length == 4)
+												try {
+													addFrame(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+													System.out.println("Added");
+												} catch (Exception e) {
+													System.out.println("BAD");
+												}
+
+										}else{
+											System.out.println("NOT RUNNING");
+										}
+									}
+									}catch(Exception e){
+										System.out.println("Wait");
+									}
+
+									// outputLine = kkp.processInput(inputLine);
+									// out.println(outputLine);						//talk to output
+									// if (outputLine.equals("Bye."))
+									// break;
+								}		
+							};
+							checker.schedule(checkInput, 0,10);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 						}
 
-				}else{
-					System.out.println("NOT RUNNING");
-				}
-			}
-			}catch(Exception e){
-				System.out.println("Wait");
-			}
+					}
+				};
+				thread.start();
+			
 
-
-			//System.out.println("RUN Final");
-
-			// outputLine = kkp.processInput(inputLine);
-			// out.println(outputLine);
-			// if (outputLine.equals("Bye."))
-			// break;
 		}
 		
 	};
+	
 	TimerTask checkFrames = new TimerTask(){
 
 		@Override
