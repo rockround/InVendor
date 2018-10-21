@@ -49,14 +49,34 @@ public class SwipeScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
-        new Thread(new ClientThread()).start();
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+                    try {
+                        socket = new Socket("LAPTOP-TGQTES87", 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+
+
+        /*new Thread(new ClientThread()).start();
         try {
+
             out = new PrintWriter(new BufferedWriter(
                     new OutputStreamWriter(socket.getOutputStream())),
                     true);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
@@ -148,10 +168,10 @@ public class SwipeScreen extends AppCompatActivity{
         @Override
         public void run() {
             try {
-                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+                //InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 
-                socket = new Socket(serverAddr, SERVERPORT);
-
+                socket = new Socket("LAPTOP-TGQTES87", SERVERPORT);
+                Log.i("m1404525",(socket==null)+"");
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
