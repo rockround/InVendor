@@ -1,4 +1,4 @@
-
+package ServerSide;
 /*
  * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  *
@@ -38,9 +38,9 @@ public class ServerClient {
 
 		String hostName;
 		int portNumber;
-
+		
 		if (args.length != 2) {
-			hostName = "LAPTOP-TGQTES87";
+			hostName = "10.34.16.154";
 			portNumber = 1;
 			// System.err.println(
 			// "Usage: java EchoClient <host name> <port number>");
@@ -56,7 +56,7 @@ public class ServerClient {
 			BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 			String fromServer;
 			String fromUser;
-			System.out.println(kkSocket.getRemoteSocketAddress());
+			//System.out.println(kkSocket.getRemoteSocketAddress());
 			/*
 			 * while (true) {// (fromServer = in.readLine()) != null) {
 			 * fromServer = in.readLine(); if (fromServer != null) {
@@ -67,12 +67,17 @@ public class ServerClient {
 			 * System.out.println("Client: " + fromUser); out.println(fromUser);
 			 * } }
 			 */
-			out.println("Add Frame 20000 1"); // Add command, name of frame =
+			//out.println("Create username emailaddress password 0");
+			//out.println("Verify username password");
+			out.println("Verify AkitoIto dog");
+			System.out.println(in.readLine());
+			out.println("Add Frome 2000000 2"); // Add command, name of frame =
 												// "Frame", life time = 2
 												// seconds, threshold = 100
 												// upswipe
+			//out.println("Upvote 0 8");
 			out.println("Upvote 0 1");
-			out.close();
+			//System.out.println(in.readLine());
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + hostName);
 			System.exit(1);
