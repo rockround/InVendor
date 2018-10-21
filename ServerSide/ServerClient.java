@@ -57,21 +57,22 @@ public class ServerClient {
 			String fromServer;
 			String fromUser;
 			System.out.println(kkSocket.getRemoteSocketAddress());
-			/*while (true) {// (fromServer = in.readLine()) != null) {
-				fromServer = in.readLine();
-				if (fromServer != null) {
-					System.out.println("Server: " + fromServer);
-					if (fromServer.equals("Bye."))
-						break;
-				}
-
-				fromUser = stdIn.readLine();
-				if (fromUser != null) {
-					System.out.println("Client: " + fromUser);
-					out.println(fromUser);
-				}
-			}*/
-			out.println("Add Frame 2000 100"); //Add command, name of frame = "Frame", life time = 2 seconds, threshold = 100 upswipe
+			/*
+			 * while (true) {// (fromServer = in.readLine()) != null) {
+			 * fromServer = in.readLine(); if (fromServer != null) {
+			 * System.out.println("Server: " + fromServer); if
+			 * (fromServer.equals("Bye.")) break; }
+			 * 
+			 * fromUser = stdIn.readLine(); if (fromUser != null) {
+			 * System.out.println("Client: " + fromUser); out.println(fromUser);
+			 * } }
+			 */
+			out.println("Add Frame 20000 1"); // Add command, name of frame =
+												// "Frame", life time = 2
+												// seconds, threshold = 100
+												// upswipe
+			out.println("Upvote 0 1");
+			out.close();
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + hostName);
 			System.exit(1);

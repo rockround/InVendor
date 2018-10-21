@@ -41,50 +41,116 @@ import java.io.*;
 
 public class ServerInterface {
 	List<FrameObject> currentFrames;
-	//PrintWriter out;
+	// PrintWriter out;
 	Scanner scn;
 	String inputLine, outputLine, adminLine;
 	ServerSocket serverSocket;
+
 	public ServerInterface() {
 		currentFrames = new ArrayList<>();
 	}
-	public void startServer(int port) throws IOException{
+
+	public void startServer(int port) throws IOException {
 
 		serverSocket = new ServerSocket(port);
-		//Socket clientSocket = serverSocket.accept();
+		// Socket clientSocket = serverSocket.accept();
 		Timer refresh = new Timer();
 		refresh.schedule(checkFrames, 5, 10);
-		refresh.schedule(checkNewUser, 10, 10);
-		//out = new PrintWriter(clientSocket.getOutputStream(), true);
-		//scn = new Scanner(System.in);
-			// Initiate conversation with client
-			//ServerProtocol kkp = new ServerProtocol();
-			//outputLine = kkp.processInput(null);
-			//out.println(outputLine);
-			
+		// refresh.schedule(checkNewUser, 10, 10);
+		for (int i = 0; i < 5; i++) {					//Creates 5 threads that wait for new server.
+			makeUserThread(i);
+		}
+		// out = new PrintWriter(clientSocket.getOutputStream(), true);
+		// scn = new Scanner(System.in);
+		// Initiate conversation with client
+		// ServerProtocol kkp = new ServerProtocol();
+		// outputLine = kkp.processInput(null);
+		// out.println(outputLine);
+
 	}
-	TimerTask checkNewUser = new TimerTask(){
+
+	void makeUserThread(int id) {
+		Thread thread = new Thread(id + "") {
+
+			public void run() {
+				try {
+					Socket clientSocket;
+					clientSocket = serverSocket.accept();
+					System.out.println("Connected");
+					setName(clientSocket.getLocalAddress().getHostName());
+					BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					Timer checker = new Timer();
+					TimerTask checkInput = new TimerTask() {
+
+						@Override
+						public void run() {
+							// System.out.println(getName());
+							// TODO Auto-generated method stub
+							try {
+								adminLine = in.readLine();
+								if (adminLine != null) {
+									String[] data = adminLine.split(" ");
+									if (adminLine.equals("Break")) {
+										cancel();
+									} else if (adminLine.contains("Add")) {
+										if (data.length == 4)
+											try {
+												addFrame(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+												System.out.println("Added");
+											} catch (Exception e) {
+												System.out.println("BAD");
+											}
+
+									} else if (data[0].equals("Upvote")) {
+										if (data.length == 3) {
+											upvoteFrame(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+										}
+									} else {
+										System.out.println("NOT RUNNING");
+									}
+								}
+							} catch (Exception e) {
+								System.out.println("Wait");
+							}
+							// outputLine = kkp.processInput(inputLine);
+							// out.println(outputLine); //talk to output
+							// if (outputLine.equals("Bye."))
+							// break;
+						}
+					};
+					checker.schedule(checkInput, 0, 10);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		};
+		thread.start();
+	}
+
+	TimerTask checkNewUser = new TimerTask() {
 
 		@Override
 		public void run() {
-				
-				Thread thread = new Thread("A"){
-					
-					public void run(){
-						try {
-							Socket clientSocket;
-							clientSocket = serverSocket.accept();
-							setName(clientSocket.getLocalAddress().getHostName());
-							System.out.println("Accepted");
-							BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-							Timer checker = new Timer();
-							TimerTask checkInput = new TimerTask(){
-								
-								@Override
-								public void run() {
-									//System.out.println(getName());
-									// TODO Auto-generated method stub
-									try{
+
+			Thread thread = new Thread("A") {
+
+				public void run() {
+					try {
+						Socket clientSocket;
+						clientSocket = serverSocket.accept();
+						System.out.println("Connected");
+						setName(clientSocket.getLocalAddress().getHostName());
+						BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+						Timer checker = new Timer();
+						TimerTask checkInput = new TimerTask() {
+
+							@Override
+							public void run() {
+								// System.out.println(getName());
+								// TODO Auto-generated method stub
+								try {
 									adminLine = in.readLine();
 									if (adminLine != null) {
 										if (adminLine.equals("Break"))
@@ -93,57 +159,65 @@ public class ServerInterface {
 											String[] data = adminLine.split(" ");
 											if (data.length == 4)
 												try {
-													addFrame(data[1], Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+													addFrame(data[1], Integer.parseInt(data[2]),
+															Integer.parseInt(data[3]));
 													System.out.println("Added");
 												} catch (Exception e) {
 													System.out.println("BAD");
 												}
 
-										}else{
+										} else {
 											System.out.println("NOT RUNNING");
 										}
 									}
-									}catch(Exception e){
-										System.out.println("Wait");
-									}
+								} catch (Exception e) {
+									System.out.println("Wait");
+								}
 
-									// outputLine = kkp.processInput(inputLine);
-									// out.println(outputLine);						//talk to output
-									// if (outputLine.equals("Bye."))
-									// break;
-								}		
-							};
-							checker.schedule(checkInput, 0,10);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-
+								// outputLine = kkp.processInput(inputLine);
+								// out.println(outputLine); //talk to output
+								// if (outputLine.equals("Bye."))
+								// break;
+							}
+						};
+						checker.schedule(checkInput, 0, 10);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-				};
-				thread.start();
-			
+
+				}
+			};
+			thread.start();
 
 		}
-		
+
 	};
-	
-	TimerTask checkFrames = new TimerTask(){
+
+	TimerTask checkFrames = new TimerTask() {
 
 		@Override
 		public void run() {
 			for (int i = 0; i < currentFrames.size(); i++) {
 				FrameObject currentFrame = currentFrames.get(i);
 				if (currentFrame.refresh()) {
-					System.out.println("Removed " + currentFrames.remove(i).name);
+					if (currentFrame.isFunded())
+						System.out.println(currentFrames.remove(i).name + " was successfully funded!");
+					else
+						System.out.println("Removed " + currentFrames.remove(i).name);
 				}
 			}
-			
+
 		}
-		
+
 	};
+
 	public void addFrame(String name, int lifeSpan, int targetVibes) {
 		currentFrames.add(new FrameObject(name, System.currentTimeMillis(), lifeSpan, targetVibes));
+	}
+
+	public void upvoteFrame(int index, int vibes) {
+		currentFrames.get(index).addVibes(vibes);
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -3,6 +3,7 @@ package ServerSide;
 public class FrameObject {
 int lifeTime;
 boolean inactive = false;
+boolean funded = false;
 int goodVibes= 0;
 int targetVibes = 0;
 long birthTime = 0;
@@ -16,8 +17,15 @@ public FrameObject(String name, long birthTime, int lifeTime, int targetVibes){
 boolean refresh(){
 	if(lifeTime<=System.currentTimeMillis()-birthTime){
 		inactive = true;
+	}else{
+		if(goodVibes == targetVibes){
+			funded = inactive = true;
+		}
 	}
 	return inactive;
+}
+public boolean isFunded(){
+	return funded;
 }
 public void deactivate(){
 	inactive = true;
@@ -27,5 +35,8 @@ public boolean isDead(){
 }
 public void setTarget(int targetVal){
 	targetVibes = targetVal;
+}
+public void addVibes(int vibes){
+	goodVibes+=vibes;
 }
 }
