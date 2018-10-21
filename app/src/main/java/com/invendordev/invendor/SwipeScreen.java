@@ -2,6 +2,7 @@ package com.invendordev.invendor;
 
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,17 +18,21 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 
 public class SwipeScreen extends AppCompatActivity{
 
-    GestureDetector gestureScanner;
     private int timesDown = 0;
     private int timesUp = 0;
     private Socket socket;
@@ -49,48 +54,7 @@ public class SwipeScreen extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_screen);
-        Thread thread = new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try  {
-                    try {
-                        socket = new Socket("localhost", 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
-
-
-        /*new Thread(new ClientThread()).start();
-        try {
-
-            out = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream())),
-                    true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
-
-
-        //mail icon button
-        /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });**/
 
         String text = String.format(getResources().getString(R.string.frame_name),name);
         TextView mainText = findViewById(R.id.mainText);
@@ -115,12 +79,12 @@ public class SwipeScreen extends AppCompatActivity{
                         Log.i("Samuel", "Swiped down: " + timesDown);
                     }
                 }
-                    out.println("COUNT " + timesUp + " " + timesDown);
+                new Thread(new ClientThread()).start();
+
                 return true;
             }
 
         });
-
 
     }
 
@@ -170,13 +134,28 @@ public class SwipeScreen extends AppCompatActivity{
             try {
                 //InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 
-                socket = new Socket("LAPTOP-TGQTES87", SERVERPORT);
-                Log.i("m1404525",(socket==null)+"");
+                socket = new Socket("10.34.16.154", SERVERPORT);
+                //Log.i("m1404525",(socket==null)+"");
+                //Log.i("m1404525",(socket==null)+" dog");
+                Log.i("pswd", "in cllientthread");
+                try {
+
+                    out = new PrintWriter(new BufferedWriter(
+                            new OutputStreamWriter(socket.getOutputStream())),
+                            true);
+                    out.println("Verify AkitoIto dog");
+                    out.println("COUNT " + timesUp + " " + timesDown);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+            //Log.i("m140","DG");
+
         }
     }
 }
