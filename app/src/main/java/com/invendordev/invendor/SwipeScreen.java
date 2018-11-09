@@ -20,8 +20,16 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.mobile.auth.ui.SignInUI;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobile.client.AWSStartupResult;
+import com.amazonaws.mobile.client.AWSStartupHandler;
+import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 public class SwipeScreen extends AppCompatActivity{
-
+    DynamoDBMapper dynamoDBMapper;
     private int timesDown = 0;
     private int timesUp = 0;
     private Socket socket;
@@ -70,16 +78,41 @@ public class SwipeScreen extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AWSMobileClient.getInstance().initialize(this, new AWSStartupHandler() {
+            @Override
+            public void onComplete(AWSStartupResult awsStartupResult) {
+                SignInUI signin = (SignInUI) AWSMobileClient.getInstance().getClient(
+                        SwipeScreen.this,
+                        SignInUI.class);
+                signin.login(
+                        SwipeScreen.this,
+                        SwipeScreen.class).execute();
+            }
+        }).execute();
+
+        AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
+        AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
+
+
+        // Add code to instantiate a AmazonDynamoDBClient
+        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
+
+        this.dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(configuration)
+                .build();
+        createNews(credentialsProvider.getCredentials().getAWSAccessKeyId());
         setContentView(R.layout.activity_swipe_screen);
 
 
+        final View background  = findViewById(R.id.background);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
         final gestureListener gl = new gestureListener();
         final GestureDetector gdt = new GestureDetector(this, gl);
-        final View background  = findViewById(R.id.background);
 
         background.setOnTouchListener(new View.OnTouchListener() {
 
@@ -173,5 +206,33 @@ public class SwipeScreen extends AppCompatActivity{
             }
 
         }
+    }
+    public void createNews(String uid) {
+        final ProjectDataDO newsItem = new ProjectDataDO();
+
+        newsItem.setUserId(uid);
+        newsItem.setYoutubeData("This is the article content");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dynamoDBMapper.save(newsItem);
+                // Item saved
+            }
+        }).start();
+    }
+    public void readNews(final String uid) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ProjectDataDO newsItem = dynamoDBMapper.load(
+                        ProjectDataDO.class,
+                        uid);
+
+                // Item read
+                // Log.d("News Item:", newsItem.toString());
+            }
+        }).start();
     }
 }
