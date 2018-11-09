@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/lor">
 
@@ -11,39 +13,24 @@
         android:layout_height="104dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="125dp"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="63dp"
         android:lineSpacingExtra="12sp"
-        android:text="Welcome to InVendor!                                                              Would you like to register or sign in?"
+        android:text="loading..."
         android:textAlignment="center"
         android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/btnNavRegister"
-        android:layout_width="107dp"
-        android:layout_height="75dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="141dp"
-        android:text="Register"
-        android:textColor="@color/colorPrimaryDark" />
-
-    <Button
-        android:id="@+id/btnNavLogin"
-        android:layout_width="107dp"
-        android:layout_height="75dp"
-        android:layout_below="@+id/textView"
-        android:layout_alignEnd="@+id/textView"
-        android:layout_marginTop="139dp"
-        android:layout_marginEnd="49dp"
-        android:text="Sign In" />
-
-    <Button
-        android:id="@+id/rootButton"
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="153dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/textView"
         android:layout_centerHorizontal="true"
-        android:text="hack" />
+        android:layout_marginBottom="-62dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:foregroundTint="@color/colorAccent"
+        android:progressBackgroundTint="@color/colorAccent"
+        android:progressTint="@color/colorPrimary" />
+
 </RelativeLayout>

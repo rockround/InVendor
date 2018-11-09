@@ -2,8 +2,8 @@
 <resources>
     <color name="detailBackground">#C5D8DD</color>
     <color name="textColor">#3D4344</color>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#5C5552</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff4081</color>
     <color name="customColor">#D5EAEF</color>
 </resources>
