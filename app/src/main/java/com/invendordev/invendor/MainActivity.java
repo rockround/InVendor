@@ -23,19 +23,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.i("Main11", "We in boissss");
         setContentView(R.layout.main_content);
-        //Log.i("Main11", "Right before initiating viewPager");
         initViewPager();
     }
 
 
 
     public void initViewPager(){
-        viewPager = (VerticalViewPager) findViewById(R.id.viewPager);
-        //Log.i("Main11", "We found the viewPagerView");
+        viewPager = findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        //Log.i("Main11", "We instantiated the viewpageradapter");
         viewPager.setAdapter(viewPagerAdapter);
 
     }

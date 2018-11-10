@@ -16,7 +16,7 @@ import java.util.Set;
 public class ProjectDataDO {
     private String _userId;
     private String _youtubeData;
-
+    private String _current;
     @DynamoDBHashKey(attributeName = "userId")
     @DynamoDBAttribute(attributeName = "userId")
     public String getUserId() {
@@ -30,9 +30,16 @@ public class ProjectDataDO {
     public String getYoutubeData() {
         return _youtubeData;
     }
-
     public void setYoutubeData(final String _youtubeData) {
         this._youtubeData = _youtubeData;
+    }
+
+    @DynamoDBAttribute(attributeName = "current")
+    public int getCommitData() {
+        return Integer.parseInt(_current);
+    }
+    public void setCommitData(final int current) {
+        this._current = current + "";
     }
 
 }
