@@ -25,6 +25,13 @@
       "Region": "us-west-2"
     }
   },
+  "ContentManager": {
+    "Default": {
+      "Bucket": "invendorandroid-hosting-mobilehub-1060660788",
+      "Region": "us-west-2",
+      "CloudFrontURL": "https://d20ey4umag5kg5.cloudfront.net"
+    }
+  },
   "PinpointAnalytics": {
     "Default": {
       "AppId": "87f72a8ad13548d9bbaeb11e6f677c5e",
