@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,18 +21,48 @@ import android.widget.VideoView;
 
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCognitoIdentityProvider;
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSIdentityProvider;
+import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.config.AWSConfiguration;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoUserToken;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBSaveExpression;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentity;
+import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
+import com.amazonaws.services.cognitoidentity.model.GetOpenIdTokenRequest;
+import com.amazonaws.services.cognitoidentity.model.transform.GetOpenIdTokenResultJsonUnmarshaller;
+import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProvider;
+import com.amazonaws.services.cognitoidentityprovider.AmazonCognitoIdentityProviderClient;
+import com.amazonaws.services.cognitoidentityprovider.model.GetUserRequest;
+import com.amazonaws.services.cognitoidentityprovider.model.transform.InitiateAuthRequestMarshaller;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemResult;
+
+import org.json.JSONException;
+
 public class SwipeScreen extends AppCompatActivity implements View.OnClickListener{
     DynamoDBMapper dynamoDBMapper;
+    AmazonDynamoDBClient dynamoDBClient;
     private int timesDown = 0;
     private int timesUp = 0;
     private String name;
@@ -63,10 +94,8 @@ public class SwipeScreen extends AppCompatActivity implements View.OnClickListen
 
         AWSCredentialsProvider credentialsProvider = AWSMobileClient.getInstance().getCredentialsProvider();
         AWSConfiguration configuration = AWSMobileClient.getInstance().getConfiguration();
-
         // Add code to instantiate a AmazonDynamoDBClient
-        AmazonDynamoDBClient dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
-
+        dynamoDBClient = new AmazonDynamoDBClient(credentialsProvider);
         this.dynamoDBMapper = DynamoDBMapper.builder()
                 .dynamoDBClient(dynamoDBClient)
                 .awsConfiguration(configuration)
@@ -91,7 +120,7 @@ public class SwipeScreen extends AppCompatActivity implements View.OnClickListen
                         background.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.green));
                         timesUp++;
                         Log.i("Samuel", "Swiped up: " + timesUp);
-                        sendCommit();
+                        sendCommit(1);
                         urls.pop();
                         projIDs.pop();
                         currentProjID = projIDs.peek();
@@ -148,19 +177,41 @@ public class SwipeScreen extends AppCompatActivity implements View.OnClickListen
     public void setTimesDown(int i){
         timesDown = i;
     }
-    public void sendCommit() {
-        final ProjectDataDO projectItem = new ProjectDataDO();
-
-        projectItem.setUserId(currentProjID);
-        projectItem.setCommitData(1);///make this better
+    public void sendCommit(final int commitNum) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                HashMap<String,AttributeValue> item_key = new HashMap<String,AttributeValue>();
+                item_key.put("userId", new AttributeValue(currentProjID));
 
-                dynamoDBMapper.save(projectItem);
-
-                // Item updated
+                AttributeValue av = new AttributeValue();
+                av.setN(commitNum+"");
+                AttributeValue stringset = new AttributeValue();
+                ArrayList<String> userdata = new ArrayList<>();
+                try {//this long segment of code gets the payload of the user token and gets the email attribute out of it...
+                   userdata.add(CognitoJWTParser.getPayload(IdentityManager.getDefaultIdentityManager().getCurrentIdentityProvider().getToken()).getString("email"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                stringset.setSS(userdata);
+                UpdateItemRequest req = new UpdateItemRequest();
+                req.setTableName("invendorandroid-mobilehub-1060660788-ProjectData");
+                req.addExpressionAttributeNamesEntry("#p","current");
+                req.addExpressionAttributeNamesEntry("#q","commitNames");
+                req.addExpressionAttributeValuesEntry(":val",av);
+                req.addExpressionAttributeValuesEntry(":name",stringset);
+                req.setUpdateExpression("add #p :val, #q :name");
+                req.setKey(item_key);
+                try {
+                    dynamoDBClient.updateItem(req);
+                } catch (ResourceNotFoundException e) {
+                    System.err.println(e.getErrorMessage());
+                    System.exit(1);
+                } catch (AmazonServiceException e) {
+                    System.err.println(e.getErrorMessage());
+                    System.exit(1);
+                }
             }
         }).start();
     }
@@ -172,7 +223,7 @@ public class SwipeScreen extends AppCompatActivity implements View.OnClickListen
                 for(ProjectDataDO d: dynamoDBMapper.scan(ProjectDataDO.class, scanExpression)){
                     urls.add(d.getYoutubeData());
                     projIDs.add(d.getUserId());
-                    Log.i("dataf",""+d.getCommitData());
+                    Log.i("data",""+d.getCommitData());
                 }
                 currentProjID = projIDs.peek();
                 currentVidID = urls.peek();
